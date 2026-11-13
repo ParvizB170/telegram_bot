@@ -40,9 +40,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif style == 'concise':
         system_prompt += " Be concise, direct, and straight to the point."
 
-    # Show typing action
+    # Show typing action and thinking message for animation/feedback while waiting
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    thinking_message = await update.message.reply_text("💭 *Sonic is thinking...*", parse_mode='Markdown')
     
     response = ask_sonic(user_message, system_instruction=system_prompt)
     
-    await update.message.reply_text(response, parse_mode='Markdown')
+    try:
+        await thinking_message.edit_text(response, parse_mode='Markdown')
+    except Exception:
+        try:
+            await thinking_message.edit_text(response)
+        except Exception:
+            await update.message.reply_text(response)
