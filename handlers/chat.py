@@ -22,7 +22,9 @@ async def chat_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_message = update.message.text
-    user_id = update.effective_user.id
+    user = update.effective_user
+    user_id = user.id
+    username = user.username
     
     # Check if user requested file generation
     if context.user_data.get('mode') == 'file_prompt':
@@ -44,7 +46,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
     thinking_message = await update.message.reply_text("💭 *Sonic is thinking...*", parse_mode='Markdown')
     
-    response = ask_sonic(user_message, system_instruction=system_prompt)
+    response = ask_sonic(user_message, system_instruction=system_prompt, user_id=user_id, username=username)
     
     try:
         await thinking_message.edit_text(response, parse_mode='Markdown')

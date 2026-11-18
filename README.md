@@ -36,3 +36,19 @@ Sonic is an advanced, lightning-fast Telegram AI ChatBot powered by Google Gemin
    ```bash
    python main.py
    ```
+
+---
+
+## 🚀 Deploying to Railway (railway.com)
+
+Sonic Bot comes fully prepared for deployment on [Railway](https://railway.com) with Nixpacks, `Procfile`, and `railway.json`.
+
+### Steps to Deploy:
+1. **Push your repository** to GitHub.
+2. Log in to [Railway](https://railway.com) and click **New Project** -> **Deploy from GitHub repo**.
+3. Select your repository.
+4. Go to your project service **Variables** tab and add your environment variables:
+   - `TELEGRAM_BOT_TOKEN`: Your Telegram Bot token from @BotFather.
+   - `GEMINI_API_KEY`: Your Gemini API key from Google AI Studio.
+5. Railway will automatically build using Nixpacks and start your bot using the `Procfile` (`worker: python main.py`).
+

@@ -2,6 +2,7 @@ import os
 import unittest
 from database import init_db, upsert_user, get_user, update_user_language, update_user_settings
 from services.file_generator import create_temp_file
+from services.gemini_service import load_bot_notes
 
 class TestSonicBot(unittest.TestCase):
     def setUp(self):
@@ -12,6 +13,8 @@ class TestSonicBot(unittest.TestCase):
     def tearDown(self):
         if os.path.exists('test_sonic.db'):
             os.remove('test_sonic.db')
+        if 'ADMIN_USER_ID' in os.environ:
+            del os.environ['ADMIN_USER_ID']
 
     def test_user_database_flow(self):
         # Test upsert
@@ -40,6 +43,27 @@ class TestSonicBot(unittest.TestCase):
             read_content = f.read()
         self.assertEqual(read_content, content)
         os.remove(path)
+
+    def test_admin_creator_recognition(self):
+        import config
+        config.ADMIN_USER_ID = '999999, @myadminuser'
+
+        # Test by ID
+        notes_admin_id = load_bot_notes(999999)
+        self.assertIn("owner and creator", notes_admin_id)
+
+        # Test by username
+        notes_admin_username = load_bot_notes(None, 'myadminuser')
+        self.assertIn("owner and creator", notes_admin_username)
+
+        # Test by username with @
+        notes_admin_username_at = load_bot_notes(None, '@myadminuser')
+        self.assertIn("owner and creator", notes_admin_username_at)
+
+        # Test regular user
+        notes_regular = load_bot_notes(12345, 'regularuser')
+        self.assertIn("regular user", notes_regular)
+        self.assertNotIn("owner and creator", notes_regular)
 
 if __name__ == '__main__':
     unittest.main()
