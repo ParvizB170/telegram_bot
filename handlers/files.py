@@ -40,7 +40,8 @@ async def process_file_generation(update: Update, context: ContextTypes.DEFAULT_
         "Followed by a newline, then the actual file content."
     )
     
-    ai_response = ask_sonic(f"Generate file for: {user_prompt}", system_instruction=system_instruction)
+    user = update.effective_user
+    ai_response = ask_sonic(f"Generate file for: {user_prompt}", system_instruction=system_instruction, user_id=user.id, username=user.username)
     
     # Parse filename and content
     filename = "sonic_generated.txt"
